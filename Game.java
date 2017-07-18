@@ -1,10 +1,10 @@
-package castle;
+package media;
 
 import java.util.Scanner;
 
 public class Game {
     private Room currentRoom;
-        
+
     public Game() 
     {
         createRooms();
@@ -12,106 +12,88 @@ public class Game {
 
     private void createRooms()
     {
-        Room outside, lobby, pub, study, bedroom;
-      
-        //	åˆ¶é€ æˆ¿é—´
-        outside = new Room("åŸå ¡å¤–");
-        lobby = new Room("å¤§å ‚");
-        pub = new Room("å°é…’å§");
-        study = new Room("ä¹¦æˆ¿");
-        bedroom = new Room("å§å®¤");
-        
-        //	åˆå§‹åŒ–æˆ¿é—´çš„å‡ºå£
-        outside.setExits(null, lobby, study, pub);
-        lobby.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        study.setExits(outside, bedroom, null, null);
-        bedroom.setExits(null, null, null, study);
+        Room outside, lobby, pub, study, bedroom,basement,attic;
 
-        currentRoom = outside;  //	ä»åŸå ¡é—¨å¤–å¼€å§‹
+        //  ÖÆÔì·¿¼ä
+        outside = new Room("³Ç±¤Íâ");
+        lobby = new Room("´óÌÃ");
+        pub = new Room("Ğ¡¾Æ°É");
+        study = new Room("Êé·¿");
+        bedroom = new Room("ÎÔÊÒ");
+        basement =new Room("µØÏÂÊÒ");
+        attic =new Room("¸óÂ¥");
+
+        //  ³õÊ¼»¯·¿¼äµÄ³ö¿Ú
+        outside.setExits("east", lobby);
+        outside.setExits("south", study);
+        outside.setExits("west", pub);
+        lobby.setExits("west", outside);
+        pub.setExits("east", outside);
+        study.setExits("north", outside);
+        study.setExits("east", bedroom);
+        bedroom.setExits("west", study);
+        lobby.setExits("up", attic);
+        attic.setExits("down", lobby);
+        basement.setExits("up", lobby);
+        lobby.setExits("down", basement);
+
+
+        currentRoom = outside;  //  ´Ó³Ç±¤ÃÅÍâ¿ªÊ¼
     }
 
     private void printWelcome() {
         System.out.println();
-        System.out.println("æ¬¢è¿æ¥åˆ°åŸå ¡ï¼");
-        System.out.println("è¿™æ˜¯ä¸€ä¸ªè¶…çº§æ— èŠçš„æ¸¸æˆã€‚");
-        System.out.println("å¦‚æœéœ€è¦å¸®åŠ©ï¼Œè¯·è¾“å…¥ 'help' ã€‚");
+        System.out.println("»¶Ó­À´µ½³Ç±¤£¡");
+        System.out.println("Èç¹ûĞèÒª°ïÖú£¬ÇëÊäÈë 'help' ¡£");
         System.out.println();
-        System.out.println("ç°åœ¨ä½ åœ¨" + currentRoom);
-        System.out.print("å‡ºå£æœ‰ï¼š");
-        if(currentRoom.northExit != null)
-            System.out.print("north ");
-        if(currentRoom.eastExit != null)
-            System.out.print("east ");
-        if(currentRoom.southExit != null)
-            System.out.print("south ");
-        if(currentRoom.westExit != null)
-            System.out.print("west ");
-        System.out.println();
+        showPrompt();
     }
 
-    // ä»¥ä¸‹ä¸ºç”¨æˆ·å‘½ä»¤
+    // ÒÔÏÂÎªÓÃ»§ÃüÁî
 
     private void printHelp() 
     {
-        System.out.print("è¿·è·¯äº†å—ï¼Ÿä½ å¯ä»¥åšçš„å‘½ä»¤æœ‰ï¼šgo bye help");
-        System.out.println("å¦‚ï¼š\tgo east");
+        System.out.print("ÃÔÂ·ÁËÂğ£¿Äã¿ÉÒÔ×öµÄÃüÁîÓĞ£ºgo bye help");
+        System.out.println("Èç£º\tgo east");
     }
 
     private void goRoom(String direction) 
     {
-        Room nextRoom = null;
-        if(direction.equals("north")) {
-            nextRoom = currentRoom.northExit;
-        }
-        if(direction.equals("east")) {
-            nextRoom = currentRoom.eastExit;
-        }
-        if(direction.equals("south")) {
-            nextRoom = currentRoom.southExit;
-        }
-        if(direction.equals("west")) {
-            nextRoom = currentRoom.westExit;
-        }
-
+        Room nextRoom = currentRoom.goExit(direction);
         if (nextRoom == null) {
-            System.out.println("é‚£é‡Œæ²¡æœ‰é—¨ï¼");
+            System.out.println("ÄÇÀïÃ»ÓĞÃÅ£¡");
         }
         else {
             currentRoom = nextRoom;
-            System.out.println("ä½ åœ¨" + currentRoom);
-            System.out.print("å‡ºå£æœ‰: ");
-            if(currentRoom.northExit != null)
-                System.out.print("north ");
-            if(currentRoom.eastExit != null)
-                System.out.print("east ");
-            if(currentRoom.southExit != null)
-                System.out.print("south ");
-            if(currentRoom.westExit != null)
-                System.out.print("west ");
-            System.out.println();
+            showPrompt();
         }
     }
-	
-	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
-		Game game = new Game();
-		game.printWelcome();
+
+    public void showPrompt() {
+         System.out.println("ÄãÔÚ" + currentRoom);
+         System.out.print("³ö¿ÚÓĞ: ");
+         System.out.println(currentRoom.getExitDesc());
+         System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        Game game = new Game();
+        game.printWelcome();
 
         while ( true ) {
-        		String line = in.nextLine();
-        		String[] words = line.split(" ");
-        		if ( words[0].equals("help") ) {
-        			game.printHelp();
-        		} else if (words[0].equals("go") ) {
-        			game.goRoom(words[1]);
-        		} else if ( words[0].equals("bye") ) {
-        			break;
-        		}
+                String line = in.nextLine();
+                String[] words = line.split(" ");
+                if ( words[0].equals("help") ) {
+                    game.printHelp();
+                } else if (words[0].equals("go") ) {
+                    game.goRoom(words[1]);
+                } else if ( words[0].equals("bye") ) {
+                    break;
+                }
         }
-        
-        System.out.println("æ„Ÿè°¢æ‚¨çš„å…‰ä¸´ã€‚å†è§ï¼");
-        in.close();
-	}
 
+        System.out.println("¸ĞĞ»ÄúµÄ¹âÁÙ¡£ÔÙ¼û£¡");
+        in.close();
+    }
 }
