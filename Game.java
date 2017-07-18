@@ -1,117 +1,52 @@
 package castle;
-
 import java.util.Scanner;
-
-public class Game {
-    private Room currentRoom;
-        
-    public Game() 
-    {
-        createRooms();
-    }
-
-    private void createRooms()
-    {
-        Room outside, lobby, pub, study, bedroom;
-      
-        //	制造房间
-        outside = new Room("城堡外");
-        lobby = new Room("大堂");
-        pub = new Room("小酒吧");
-        study = new Room("书房");
-        bedroom = new Room("卧室");
-        
-        //	初始化房间的出口
-        outside.setExits(null, lobby, study, pub);
-        lobby.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        study.setExits(outside, bedroom, null, null);
-        bedroom.setExits(null, null, null, study);
-
-        currentRoom = outside;  //	从城堡门外开始
-    }
-
-    private void printWelcome() {
-        System.out.println();
-        System.out.println("欢迎来到城堡！");
-        System.out.println("这是一个超级无聊的游戏。");
-        System.out.println("如果需要帮助，请输入 'help' 。");
-        System.out.println();
-        System.out.println("现在你在" + currentRoom);
-        System.out.print("出口有：");
-        if(currentRoom.northExit != null)
-            System.out.print("north ");
-        if(currentRoom.eastExit != null)
-            System.out.print("east ");
-        if(currentRoom.southExit != null)
-            System.out.print("south ");
-        if(currentRoom.westExit != null)
-            System.out.print("west ");
-        System.out.println();
-    }
-
-    // 以下为用户命令
-
-    private void printHelp() 
-    {
-        System.out.print("迷路了吗？你可以做的命令有：go bye help");
-        System.out.println("如：\tgo east");
-    }
-
-    private void goRoom(String direction) 
-    {
+class Room {
+    public Room goExit(String direction) {
         Room nextRoom = null;
         if(direction.equals("north")) {
-            nextRoom = currentRoom.northExit;
+            nextRoom =  northExit;
         }
         if(direction.equals("east")) {
-            nextRoom = currentRoom.eastExit;
+            nextRoom =  eastExit;
         }
         if(direction.equals("south")) {
-            nextRoom = currentRoom.southExit;
+            nextRoom =  southExit;
         }
         if(direction.equals("west")) {
-            nextRoom = currentRoom.westExit;
+            nextRoom =  westExit;
         }
-
-        if (nextRoom == null) {
-            System.out.println("那里没有门！");
+        return  nextRoom;
+    }
+    public String getExitDesc() {
+           StringBuffer sb = new StringBuffer();
+           if( northExit != null) 
+               sb.append("north");
+           if( eastExit != null) 
+               sb.append("east");
+           if( southExit != null) 
+              sb.append("south");
+           if( westExit != null) 
+              sb.append("weat");
+           System.out.println();
+           return sb;
+    }
+}
+public class Game {
+     private void goRoom(String direction) 
+     {
+        Room nextRoom = currentRoom.goExit(direction);
+            if (nextRoom == null) {
+                System.out.println("����û���ţ�");
+            }
+            else {
+                currentRoom = nextRoom;
+                showPrompt();
+            }
         }
-        else {
-            currentRoom = nextRoom;
-            System.out.println("你在" + currentRoom);
-            System.out.print("出口有: ");
-            if(currentRoom.northExit != null)
-                System.out.print("north ");
-            if(currentRoom.eastExit != null)
-                System.out.print("east ");
-            if(currentRoom.southExit != null)
-                System.out.print("south ");
-            if(currentRoom.westExit != null)
-                System.out.print("west ");
+        public void showPrompt() {
+            System.out.println("����" + currentRoom);
+            System.out.print("������: ");
+          System.out.println(currentRoom.getExitDesc());
             System.out.println();
         }
-    }
-	
-	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
-		Game game = new Game();
-		game.printWelcome();
-
-        while ( true ) {
-        		String line = in.nextLine();
-        		String[] words = line.split(" ");
-        		if ( words[0].equals("help") ) {
-        			game.printHelp();
-        		} else if (words[0].equals("go") ) {
-        			game.goRoom(words[1]);
-        		} else if ( words[0].equals("bye") ) {
-        			break;
-        		}
-        }
-        
-        System.out.println("感谢您的光临。再见！");
-        in.close();
-	}
-
-}
+ }
